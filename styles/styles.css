@@ -1,0 +1,147 @@
+/* ============================================================================
+   Moon Inclination demonstrator -- sim-specific styles only.
+   Shared palette/classes come from foundation/kl-unl.css (never edited here).
+   ========================================================================== */
+
+:root {
+  --stage-bg: #ffffff;                 /* the Flash stage is white */
+  --ecliptic-green: #009900;           /* the green ecliptic-plane line/label */
+  --now-red: #d40000;                  /* the red "now" marker */
+  --season-yellow: #fbe98c;            /* pale yellow eclipse-season block */
+  --stage-border: #767676;
+}
+
+/* Comfortable, zoomable base type (rem-based; >=1.125rem floor). */
+body { font-size: 1.125rem; }
+
+.app-shell { max-width: 66rem; }
+
+/* ----- Overall layout: enlargement + controls on top, orbit, then timeline ----- */
+.sim-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  grid-template-areas:
+    "enlarge  controls"
+    "orbit    orbit"
+    "timeline timeline";
+  gap: 0.6rem;
+  padding: 0.6rem;
+  align-items: stretch;
+}
+.sim-enlarge  { grid-area: enlarge; }
+.sim-controls { grid-area: controls; }
+.sim-orbit    { grid-area: orbit; }
+.sim-timeline { grid-area: timeline; }
+
+.panel { padding-bottom: 0.6rem; }
+
+/* ----- Canvas stage wrappers (canvas scales, aspect ratio preserved) ----- */
+.stage-wrap {
+  position: relative;
+  margin: 0 1rem;
+  background: var(--stage-bg);
+  line-height: 0;
+}
+.stage-wrap--enlarge { border: 1px solid var(--stage-border); }
+.stage-wrap--orbit,
+.stage-wrap--time { margin: 0 1rem; }
+
+.stage-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--stage-bg);
+}
+
+/* Only the timeline canvas is interactive (draggable / arrow-key scrubbing). */
+.time-canvas {
+  touch-action: none;           /* dragging must not scroll the page */
+  cursor: ew-resize;
+}
+.time-canvas:focus-visible {
+  outline: 0.15rem solid var(--outline-color, #005fcc);
+  outline-offset: -0.15rem;
+}
+
+/* ----- Enlargement panel sizing (keeps the ~276x147 aspect box tidy) ----- */
+.sim-enlarge .stage-wrap--enlarge { max-width: 18rem; }
+
+/* ----- Speed control ----- */
+.speed-fieldset { padding-bottom: 0.75rem; }
+.speed-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+.speed-end {
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground-color, #1a1a1a);
+}
+.speed-slider { width: 100%; cursor: pointer; min-height: 2.75rem; }
+.speed-value {
+  display: block;
+  margin-top: 0.25rem;
+  text-align: center;
+  font-size: 1rem;
+  min-height: 1.6rem;
+}
+
+/* ----- Checkboxes ----- */
+.check-fieldset .control-choice { min-height: 2.25rem; }
+.check-fieldset label { font-size: 1rem; }
+
+/* ----- Orbit overlay labels (green ecliptic name + italic caveat) ----- */
+.ecliptic-label,
+.caveat-label {
+  position: absolute;
+  pointer-events: none;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+.ecliptic-label {
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ecliptic-green);
+  font-weight: 600;
+  background: var(--stage-bg);
+  padding: 0 0.15rem;
+}
+.caveat-label {
+  right: 0.6rem;
+  top: calc(50% + 1.4rem);
+  font-style: italic;
+  color: var(--foreground-color, #1a1a1a);
+  visibility: hidden;             /* shown only when "exaggerate body sizes" is on */
+}
+.caveat-label.is-visible { visibility: visible; }
+
+/* Equation/readout containers (MathJax) inherit text colour. */
+mjx-container { color: inherit; }
+
+/* ============================================================================
+   Responsive: desktop -> iPad -> phone portrait (single column, stacked)
+   ========================================================================== */
+@media (max-width: 56rem) {
+  .sim-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "enlarge"
+      "controls"
+      "orbit"
+      "timeline";
+  }
+  .sim-enlarge .stage-wrap--enlarge { max-width: 22rem; margin: 0 auto; }
+}
+
+@media (max-width: 34rem) {
+  body { font-size: 1.0625rem; }
+  .stage-wrap { margin: 0 0.5rem; }
+  .ecliptic-label { font-size: 0.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto; }
+}

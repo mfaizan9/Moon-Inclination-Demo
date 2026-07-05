@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moon Inclination</title>
+
+  <!-- Shared KL-UNL foundation (copied in unchanged) -->
+  <link rel="stylesheet" href="foundation/kl-unl.css" type="text/css" media="all">
+  <!-- Sim-specific styles only -->
+  <link rel="stylesheet" href="styles/styles.css" type="text/css" media="all">
+
+  <!-- MathJax: bundled locally (no CDN at runtime). tex-svg output keeps the
+       MathJax contextual menu ("Show Math As...") working for the right-click test. -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']] },
+      svg: { fontCache: 'global' },
+      options: { menuOptions: { settings: { assistiveMml: true } } }
+    };
+  </script>
+  <script defer src="assets/mathjax/tex-svg.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <kl-unl-masthead sim-id="mooninc" json-url="foundation/contents.json"></kl-unl-masthead>
+
+    <main class="sim-layout" aria-label="Moon Inclination demonstrator">
+
+      <!-- ===================== TOP-LEFT: ENLARGEMENT (zoom window) ===================== -->
+      <section class="panel sim-enlarge" aria-labelledby="enlarge-heading">
+        <h2 id="enlarge-heading" class="panel__heading">enlargement</h2>
+        <div class="stage-wrap stage-wrap--enlarge">
+          <canvas id="enlargeCanvas" class="stage-canvas" width="276" height="147"
+                  role="img" aria-describedby="enlarge-desc"></canvas>
+          <p id="enlarge-desc" class="sr-only"></p>
+        </div>
+      </section>
+
+      <!-- ===================== TOP-RIGHT: CONTROLS ===================== -->
+      <section class="panel sim-controls" aria-labelledby="controls-heading">
+        <h2 id="controls-heading" class="sr-only">Simulation controls</h2>
+
+        <fieldset class="control-fieldset speed-fieldset">
+          <legend class="control-fieldset__legend">speed (days/sec)</legend>
+          <div class="speed-row">
+            <span class="speed-end" id="speedMin" aria-hidden="true"></span>
+            <input type="range" id="speedSlider" class="control-row__slider speed-slider"
+                   min="0" max="30" step="0.1" value="2.5"
+                   aria-label="animation speed"
+                   aria-describedby="speedValue">
+            <span class="speed-end" id="speedMax" aria-hidden="true"></span>
+          </div>
+          <output class="speed-value" id="speedValue" aria-hidden="true"></output>
+        </fieldset>
+
+        <fieldset class="control-fieldset check-fieldset">
+          <legend class="control-fieldset__legend sr-only">Display options</legend>
+          <div class="control-choice">
+            <input type="checkbox" id="showPath" checked>
+            <label for="showPath">show orbital path</label>
+          </div>
+          <div class="control-choice">
+            <input type="checkbox" id="exaggerate">
+            <label for="exaggerate">exaggerate body sizes</label>
+          </div>
+          <div class="control-choice">
+            <input type="checkbox" id="showEcliptic" checked>
+            <label for="showEcliptic">show ecliptic plane</label>
+          </div>
+          <div class="control-choice">
+            <input type="checkbox" id="animate" checked>
+            <label for="animate">animate</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- ===================== MIDDLE: ORBIT VIEW ===================== -->
+      <section class="panel sim-orbit" aria-labelledby="orbit-heading">
+        <h2 id="orbit-heading" class="sr-only">Moon orbit viewed edge-on to the ecliptic plane</h2>
+        <div class="stage-wrap stage-wrap--orbit">
+          <canvas id="orbitCanvas" class="stage-canvas" width="750" height="200"
+                  role="img" aria-describedby="orbit-desc"></canvas>
+          <span class="ecliptic-label" id="eclipticLabel" aria-hidden="true">ecliptic plane</span>
+          <span class="caveat-label" id="caveatLabel" aria-hidden="true">not to scale</span>
+          <p id="orbit-desc" class="sr-only"></p>
+        </div>
+      </section>
+
+      <!-- ===================== BOTTOM: TIME STRIP (calendar) ===================== -->
+      <section class="panel sim-timeline" aria-labelledby="timeline-heading">
+        <h2 id="timeline-heading" class="sr-only">Calendar timeline and eclipse seasons</h2>
+        <div class="stage-wrap stage-wrap--time">
+          <canvas id="timeCanvas" class="stage-canvas time-canvas" width="750" height="120"
+                  role="slider" tabindex="0"
+                  aria-label="calendar date, day of year"
+                  aria-valuemin="0" aria-valuemax="365" aria-valuenow="0"
+                  aria-describedby="time-instr"></canvas>
+        </div>
+        <p class="panel__help" id="time-instr">
+          Drag the calendar, or focus it and use the arrow keys, to move through time.
+          Left/Right change the date by one day, Page&nbsp;Up/Down by one month, Home returns to the start.
+        </p>
+      </section>
+    </main>
+
+    <!-- ===================== SCREEN-READER LIVE REGION ===================== -->
+    <div class="sr-only" aria-live="polite" id="live"></div>
+  </div>
+
+  <!-- Foundation equation helper (MathJax wrapper) -->
+  <script src="foundation/kl-unl.js"></script>
+  <!-- Masthead custom element -->
+  <script src="foundation/kl-unl-masthead.js"></script>
+  <!-- Simulation logic -->
+  <script src="simulation.js"></script>
+</body>
+</html>
